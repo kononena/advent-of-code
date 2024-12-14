@@ -24,11 +24,11 @@ int main(int argc, char* argv[]) {
 
   bool is_input = filename == "input.txt";
   
-  /* Part 1*/
+  /* Part 1 */
 
   std::cout << "Part 1\n  Solution : " << std::endl;
 
-  /* Part 2*/
+  /* Part 2 */
 
   std::cout << "Part 2\n  Solution : " << std::endl;
 
