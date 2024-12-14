@@ -2,8 +2,18 @@
 #include <fstream>
 #include <vector>
 
-int main() {
-  std::string filename = "example.txt";
+int main(int argc, char* argv[]) {
+  if (argc < 2) {
+    std::cerr << "Provide filename" << std::endl;
+    return 1;
+  }
+  std::string input(argv[1]);
+  std::string filename;
+  if (input[0] == 'e')
+    filename = "example.txt";
+  else if (input[0] == 'i')
+    filename = "input.txt";
+  
   std::cout << "Using file " << filename << std::endl;
   std::ifstream file;
   file.open(filename, std::ios::in);
@@ -11,6 +21,8 @@ int main() {
     std::cerr << "Error opening file" << std::endl;
     return 1;
   }
+
+  bool is_input = filename == "input.txt";
   
   /* Part 1*/
 
