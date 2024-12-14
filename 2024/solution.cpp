@@ -12,7 +12,13 @@ int main() {
     return 1;
   }
   
-  
+  /* Part 1*/
+
+  std::cout << "Part 1\n  Solution : " << std::endl;
+
+  /* Part 2*/
+
+  std::cout << "Part 2\n  Solution : " << std::endl;
 
   return 0;
 }
