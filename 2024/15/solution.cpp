@@ -45,6 +45,49 @@ bool attempt_to_move(std::vector<char>& warehouse, int nx, int x, int y, int dx,
   return false;
 }
 
+void move_wide_y(std::vector<char>& warehouse, int nx, int x, int y, int dy) {
+  char self = warehouse[x + y * nx];
+  if (self == '.')
+    return;
+  
+  char targetA = warehouse[x + (y + dy) * nx];
+  int ddx = 0;
+  if (targetA == '[')
+    ddx = 1;
+  else if (targetA == ']')
+    ddx = -1;
+  char targetB = warehouse[(x + ddx) + (y + dy) * nx];
+
+  if (targetA != '.') {
+    move_wide_y(warehouse, nx, x,     y+dy, dy);
+    move_wide_y(warehouse, nx, x+ddx, y+dy, dy);
+  }
+
+  warehouse[x + y * nx] = '.';
+  warehouse[x + (y + dy) * nx] = self;
+}
+
+bool attempt_to_move_wide_y(std::vector<char>& warehouse, int nx, int x, int y, int dy) {
+  char self = warehouse[x + y * nx];
+  if (self == '#')
+    return false;
+  
+  char targetA = warehouse[ x        + (y + dy) * nx];
+  int ddx = 0;
+  if (targetA == '[')
+    ddx = 1;
+  else if (targetA == ']')
+    ddx = -1;
+  char targetB = warehouse[(x + ddx) + (y + dy) * nx];
+
+  if (targetA == '#' || targetB == '#')
+    return false;
+
+  bool can_move_A = targetA == '.' || attempt_to_move_wide_y(warehouse, nx, x,     y+dy, dy);
+  bool can_move_B = targetB == '.' || attempt_to_move_wide_y(warehouse, nx, x+ddx, y+dy, dy);
+  return can_move_A && can_move_B;
+}
+
 int main(int argc, char* argv[]) {
   if (argc < 2) {
     std::cerr << "Provide filename" << std::endl;
@@ -101,17 +144,64 @@ int main(int argc, char* argv[]) {
   }
 
   long GPS = 0L;
-  for (int y = 0; y < ny; y++) {
-    for (int x = 0; x < nx; x++)
-    if (warehouse[x + y * nx] == 'O')
-      GPS += x + y * 100;
-  }
+  for (int y = 0; y < ny; y++)
+  for (int x = 0; x < nx; x++)
+  if (warehouse[x + y * nx] == 'O')
+    GPS += x + y * 100;
 
   std::cout << "Part 1\n  Sum of GPS coordinates : " << GPS << std::endl;
 
-  /* Part 2 */
+  file.clear();
+  file.seekg(0);
+  std::vector<char> wide_warehouse(nx*ny*2, '.');
+  
+  for (int y = 0; y < ny; y++)
+  for (int x = 0; x < nx; x++) {
+    file >> c;
+    switch (c) {
+      case '#':
+        wide_warehouse[x * 2     + y * nx * 2] = '#';
+        wide_warehouse[x * 2 + 1 + y * nx * 2] = '#';
+        break;
+      case 'O':
+        wide_warehouse[x * 2     + y * nx * 2] = '[';
+        wide_warehouse[x * 2 + 1 + y * nx * 2] = ']';
+        break;
+      case '@':
+        wide_warehouse[x * 2     + y * nx * 2] = '@';
+        rx = x * 2;
+        ry = y;
+        break;
+    }
+  }
 
-  std::cout << "Part 2\n  Solution : " << std::endl;
+  c = '.';
+
+  while (c != -1) {
+    c = get_next_char(file);
+    if (c == -1)
+      break;
+    
+    unpack_movement(c, dx, dy);
+    if (dy == 0) {
+      if (attempt_to_move(wide_warehouse, nx * 2, rx, ry, dx, dy))
+        rx += dx;
+    }
+    else {
+      if (attempt_to_move_wide_y(wide_warehouse, nx * 2, rx, ry, dy)) {
+        move_wide_y(wide_warehouse, nx * 2, rx, ry, dy);
+        ry += dy;
+      }
+    }
+  }
+  
+  GPS = 0L;
+  for (int y = 0; y < ny; y++)
+  for (int x = 0; x < nx * 2; x++)
+  if (wide_warehouse[x + y * nx * 2] == '[')
+    GPS += x + y * 100;
+
+  std::cout << "Part 2\n  Sum of wide GPS coordinates : " << GPS << std::endl;
 
   return 0;
 }
