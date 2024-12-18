@@ -4,21 +4,7 @@
 #include <queue>
 #include <chrono>
 
-int read_next_integer(std::ifstream& file) {
-  char c = '.';
-  while (c < '0' || c > '9') {
-    if (c == -1)
-      std::cerr << "No more integers to read" << std::endl;
-    c = file.get();
-  }
-
-  int val = 0;
-  while (c >= '0' && c <= '9') {
-    val = val * 10 + (c - '0');
-    c = file.get();
-  }
-  return val;
-}
+#include "utils.hpp"
 
 void perform_bfs(std::vector<char>& map, std::vector<int>& steps, std::queue<int>& pos, int nxy) {
   while (!pos.empty()) {
@@ -79,8 +65,9 @@ int main(int argc, char* argv[]) {
   
   std::vector<int> bytes(n_bytes, 0);
   for (int i = 0; i < n_bytes; i++) {
-    int x = read_next_integer(file);
-    int y = read_next_integer(file);
+    int x, y;
+    utils::read_next_integer(file, x);
+    utils::read_next_integer(file, y);
     bytes[i] = (x+1) + (y+1) * nxy; // account for padding
   }
 
