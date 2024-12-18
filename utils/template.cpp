@@ -2,6 +2,8 @@
 #include <fstream>
 #include <vector>
 
+#include "utils.hpp"
+
 int main(int argc, char* argv[]) {
   if (argc < 2) {
     std::cerr << "Provide filename" << std::endl;
