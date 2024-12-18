@@ -107,7 +107,8 @@ int main(int argc, char* argv[]) {
   pos.push(1 + nxy);
 
   int index_of_last_fallen_byte = n_bytes;
-  auto t1 = std::chrono::high_resolution_clock::now();
+  utils::Timer timer;
+  timer.tic();
   while (steps[(nxy-2) + (nxy-2) * nxy] == nxy * nxy) {
     map[bytes[--index_of_last_fallen_byte]] = '.';
 
@@ -128,13 +129,12 @@ int main(int argc, char* argv[]) {
     
     perform_bfs(map, steps, pos, nxy);
   }
-  auto t2 = std::chrono::high_resolution_clock::now();
-  double duration = (t2 - t1).count() / 1e6;
+  timer.toc();
 
   int x = bytes[index_of_last_fallen_byte] % nxy;
   int y = bytes[index_of_last_fallen_byte] / nxy;
   std::cout << "Part 2\n  First blocking byte : " << x-1 << "," << y-1 << std::endl;
-  std::cout << "  Time elapsed: " << duration << " ms" << std::endl;
+  timer.print();
 
   return 0;
 }
