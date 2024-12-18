@@ -25,6 +25,7 @@ int main(int argc, char* argv[]) {
   }
 
   bool is_input = filename == "input.txt";
+  utils::Timer timer;
   
   /* Part 1 */
 
