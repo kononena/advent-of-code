@@ -26,7 +26,7 @@ void utils::read_grid_2D(std::ifstream& file, std::vector<char>& grid, int nx_in
   int nx = nx_input + padding * 2;
   int ny = ny_input + padding * 2;
   grid.resize(nx * ny, padding_char);
-  for (int y = 1; y < ny - 1; y++)
-  for (int x = 1; x < nx - 1; x++)
+  for (int y = padding; y < ny - padding; y++)
+  for (int x = padding; x < nx - padding; x++)
     file >> grid[x + y * nx];
 }
