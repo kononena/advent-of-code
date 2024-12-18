@@ -34,18 +34,18 @@ void utils::read_grid_2D(std::ifstream& file, std::vector<char>& grid, int nx_in
 }
 
 void utils::print_grid_2D(std::vector<char>& grid, int nx, int ny, char delimiter) {
-  for (int i = 0; i < nx + 2; i++)
+  for (int i = 0; i < nx + 4; i++)
     std::cout << delimiter;
   std::cout << "\n";
 
   for (int y = 0; y < ny; y++) {
-    std::cout << " ";
+    std::cout << "  ";
     for (int x = 0; x < nx; x++)
       std::cout << grid[x + y * nx];
     std::cout << "\n";
   }
 
-  for (int i = 0; i < nx + 2; i++)
+  for (int i = 0; i < nx + 4; i++)
     std::cout << delimiter;
   std::cout << std::endl;
 }
