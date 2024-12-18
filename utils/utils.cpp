@@ -33,6 +33,23 @@ void utils::read_grid_2D(std::ifstream& file, std::vector<char>& grid, int nx_in
     file >> grid[x + y * nx];
 }
 
+void utils::print_grid_2D(std::vector<char>& grid, int nx, int ny, char delimiter) {
+  for (int i = 0; i < nx + 2; i++)
+    std::cout << delimiter;
+  std::cout << "\n";
+
+  for (int y = 0; y < ny; y++) {
+    std::cout << " ";
+    for (int x = 0; x < nx; x++)
+      std::cout << grid[x + y * nx];
+    std::cout << "\n";
+  }
+
+  for (int i = 0; i < nx + 2; i++)
+    std::cout << delimiter;
+  std::cout << std::endl;
+}
+
 void utils::Timer::tic() {
   starting_time = std::chrono::high_resolution_clock::now();
 }

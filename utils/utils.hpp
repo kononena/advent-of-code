@@ -28,6 +28,13 @@ namespace utils {
   /// @param padding_char Padding character.
   void read_grid_2D(std::ifstream& file, std::vector<char>& grid, int nx_input, int ny_input, int padding, char padding_char);
 
+  /// @brief Print a rectangular grid into standard output. Grid is separated from other output by lines of delimiting characters.
+  /// @param grid Grid to print.
+  /// @param nx Size along x.
+  /// @param ny Size along y.
+  /// @param delimiter Character to use in lines before and after grid output.
+  void print_grid_2D(std::vector<char>& grid, int nx, int ny, char delimiter = '-');
+
   /// @brief Helper class for simple time measurements.
   class Timer {
   private:
@@ -46,7 +53,7 @@ namespace utils {
     double duration();
 
     /// @brief Print elapsed time between latest calls to `tic()` and `toc()`.
-    /// @param indentation Level of indentation in console. Spaces per level: 2.
+    /// @param indentation Level of indentation in standard output. Spaces per level: 2.
     void print(int indentation = 1);
   };
 }
