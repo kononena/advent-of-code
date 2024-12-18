@@ -1,3 +1,4 @@
 .vscode
 *.txt
-**/solution
+solution
+build/*
