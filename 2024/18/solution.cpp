@@ -49,6 +49,8 @@ int main(int argc, char* argv[]) {
     filename = "example.txt";
   else if (input[0] == 'i')
     filename = "input.txt";
+  else if (input[0] == 'l')
+    filename = "large-example.txt";
   
   std::cout << "Using file " << filename << std::endl;
   std::ifstream file;
@@ -59,6 +61,7 @@ int main(int argc, char* argv[]) {
   }
 
   bool is_input = filename == "input.txt";
+  bool is_large = filename == "large-example.txt";
   
   int nxy = 7;
   int n_bytes = 25;
@@ -66,6 +69,10 @@ int main(int argc, char* argv[]) {
   if (is_input) {
     nxy = 71;
     n_bytes = 3450;
+    bytes_part_1 = 1024;
+  } else if (is_large) {
+    nxy = 213;
+    n_bytes = 31051;
     bytes_part_1 = 1024;
   }
   nxy += 2; // padding
@@ -124,7 +131,7 @@ int main(int argc, char* argv[]) {
     //   pos.push(x + y * nxy);
     
     // optimization : initialize next search by the unblocked position
-    // speeds up solution by ~70x
+    // speeds up solution by a factor of ~nxy
     int x = bytes[index_of_last_fallen_byte] % nxy;
     int y = bytes[index_of_last_fallen_byte] / nxy;
     int dir[4] = { 1, -1, nxy, -nxy };
