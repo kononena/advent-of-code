@@ -32,3 +32,22 @@ void utils::read_grid_2D(std::ifstream& file, std::vector<char>& grid, int nx_in
   for (int x = padding; x < nx - padding; x++)
     file >> grid[x + y * nx];
 }
+
+void utils::Timer::tic() {
+  starting_time = std::chrono::high_resolution_clock::now();
+}
+
+double utils::Timer::toc() {
+  ending_time = std::chrono::high_resolution_clock::now();
+  return duration();
+}
+
+double utils::Timer::duration() {
+  return (ending_time - starting_time).count() / 1e6;
+}
+
+void utils::Timer::print(int indentation) {
+  for (int i = 0; i < indentation; i++)
+    std::cout << "  ";
+  std::cout << "Time elapsed : " << duration() << " ms." << std::endl;
+}

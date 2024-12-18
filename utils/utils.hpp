@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <chrono>
 
 namespace utils {
 
@@ -26,4 +27,26 @@ namespace utils {
   /// @param padding Number of characters to pad along each axis.
   /// @param padding_char Padding character.
   void read_grid_2D(std::ifstream& file, std::vector<char>& grid, int nx_input, int ny_input, int padding, char padding_char);
+
+  /// @brief Helper class for simple time measurements.
+  class Timer {
+  private:
+    std::chrono::_V2::system_clock::time_point starting_time;
+    std::chrono::_V2::system_clock::time_point ending_time;
+  public:
+    /// @brief Start the timer.
+    void tic();
+
+    /// @brief Measure elapsed time since starting.
+    /// @return Time in milliseconds since the last call to `tic()`.
+    double toc();
+
+    /// @brief Get elapsed time between latest calls to `tic()` and `toc()`.
+    /// @return Time in milliseconds between latest calls to `tic()` and `toc()`.
+    double duration();
+
+    /// @brief Print elapsed time between latest calls to `tic()` and `toc()`.
+    /// @param indentation Level of indentation in console. Spaces per level: 2.
+    void print(int indentation = 1);
+  };
 }
