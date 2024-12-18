@@ -12,7 +12,7 @@ bool utils::read_next_integer(std::ifstream& file, T& value) {
 
   value = (T)0;
   while (c >= '0' && c <= '9') {
-    value = value * 10 + (c - '0');
+    value = value * (T)10 + (c - '0');
     c = file.get();
   }
 
@@ -21,6 +21,8 @@ bool utils::read_next_integer(std::ifstream& file, T& value) {
   
   return true;
 }
+template bool utils::read_next_integer<int>(std::ifstream& file, int& value);
+template bool utils::read_next_integer<long>(std::ifstream& file, long& value);
 
 void utils::read_grid_2D(std::ifstream& file, std::vector<char>& grid, int nx_input, int ny_input, int padding, char padding_char) {
   int nx = nx_input + padding * 2;
