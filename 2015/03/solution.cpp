@@ -65,8 +65,49 @@ int main(int argc, char* argv[]) {
   std::cout << "Part 1\n  Houses with any presents : " << unique_houses << std::endl;
 
   /* Part 2 */
+  file.clear();
+  file.seekg(0);
 
-  std::cout << "Part 2\n  Solution : " << std::endl;
+  deliveries.clear();
+  add_or_increment(deliveries, 0);
+  add_or_increment(deliveries, 0);
+  x = 0, y = 0;
+  int rx = 0, ry = 0;
+  int dx, dy, instruction = 0;
+  c = file.get();
+  while (c != -1) {
+    dx = 0, dy = 0;
+    switch (c) {
+      case 'v':
+        dy = 1;
+        break;
+      case '^':
+        dy = -1;
+        break;
+      case '<':
+        dx = -1;
+        break;
+      case '>':
+        dx = 1;
+        break;
+    }
+
+    if (instruction++ & 1) {
+      rx += dx;
+      ry += dy;
+      add_or_increment(deliveries, rx + (ry << 15));
+    } else {
+      x += dx;
+      y += dy;
+      add_or_increment(deliveries, x + (y << 15));
+    }
+    
+    c = file.get();
+  }
+
+  unique_houses = deliveries.size();
+
+  std::cout << "Part 2\n  Houses with any (robo-)presents : " << unique_houses << std::endl;
 
   return 0;
 }
