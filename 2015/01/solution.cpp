@@ -41,8 +41,26 @@ int main(int argc, char* argv[]) {
   std::cout << "Part 1\n  Final floor : " << floor << std::endl;
 
   /* Part 2 */
+  file.clear();
+  file.seekg(0);
 
-  std::cout << "Part 2\n  Solution : " << std::endl;
+  floor = 0L;
+  int pos = 0;
+  c = file.get();
+  while (c != -1) {
+    if (c == '(')
+      floor++;
+    else
+      floor--;
+    
+    pos++;
+    if (floor == -1)
+      break;
+    
+    c = file.get();
+  }
+
+  std::cout << "Part 2\n  First basement position : " << pos << std::endl;
 
   return 0;
 }
