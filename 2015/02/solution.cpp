@@ -46,8 +46,20 @@ int main(int argc, char* argv[]) {
   std::cout << "Part 1\n  Total wrapping paper : " << wrapping_paper << std::endl;
 
   /* Part 2 */
+  file.clear();
+  file.seekg(0);
+  long ribbon = 0L;
+  for (int i = 0; i < n_packages; i++) {
+    utils::read_next_integer(file, l);
+    utils::read_next_integer(file, w);
+    utils::read_next_integer(file, h);
 
-  std::cout << "Part 2\n  Solution : " << std::endl;
+    ribbon += 2 * (l + w + h);
+    ribbon -= 2 * std::max(std::max(l, w), h);
+    ribbon += l * w * h;
+  }
+
+  std::cout << "Part 2\n  Total ribbon : " << ribbon << std::endl;
 
   return 0;
 }
