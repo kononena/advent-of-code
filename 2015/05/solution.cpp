@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <unordered_map>
 
 #include "utils.hpp"
 
@@ -52,6 +53,55 @@ bool is_nice(std::string line) {
   return true;
 }
 
+bool is_even_nicer(std::string line) {
+  std::unordered_map<std::string, int> pairs;
+  bool repeated_pair = false;
+  std::string pair = "01";
+  char ca = line[0];
+  char c;
+  int i = 0;
+  while(++i < line.length()) {
+    c = line[i];
+    pair[0] = ca;
+    pair[1] = c;
+
+    if (pairs.find(pair) != pairs.end()) {
+      if (pairs[pair] < i - 1) {
+        repeated_pair = true;
+        break;
+      }
+    } else {
+      pairs[pair] = i;
+    }
+
+    ca = c;
+  }
+
+  if (!repeated_pair)
+    return false;
+  
+  bool repeated_letter = false;
+  char cb = line[0];
+  ca = line[1];
+  i = 1;
+  while (++i < line.length()) {
+    c = line[i];
+
+    if (cb == c) {
+      repeated_letter = true;
+      break;
+    }
+
+    cb = ca;
+    ca = c;
+  }
+
+  if (!repeated_letter)
+    return false;
+
+  return true;
+}
+
 int main(int argc, char* argv[]) {
   if (argc < 2) {
     std::cerr << "Provide filename" << std::endl;
@@ -84,8 +134,14 @@ int main(int argc, char* argv[]) {
   std::cout << "Part 1\n  Nice strings : " << nice << std::endl;
 
   /* Part 2 */
+  file.clear();
+  file.seekg(0);
+  nice = 0;
+  for (std::string line; std::getline(file, line); )
+  if (is_even_nicer(line))
+    nice++;
 
-  std::cout << "Part 2\n  Solution : " << std::endl;
+  std::cout << "Part 2\n  Newly nice strings : " << nice << std::endl;
 
   return 0;
 }
