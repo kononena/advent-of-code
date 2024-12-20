@@ -82,11 +82,31 @@ int main(int argc, char* argv[]) {
     }
   }
 
-  std::cout << "Part 1\n  Cheats saving over " << minimum_save << " picoseconds : " << good_cheats << std::endl;
+  std::cout << "Part 1\n  Cheats saving at least " << minimum_save << " picoseconds : " << good_cheats << std::endl;
 
   /* Part 2 */
+  good_cheats = 0L;
+  minimum_save = 74;
+  if (is_input)
+    minimum_save = 100;
+  // Cheats start on a unique track position...
+  for (int y = 0; y < nxy; y++)
+  for (int x = 0; x < nxy; x++)
+  if (map[x + y * nxy] == '.') {
+    score = scores[x + y * nxy];
+    
+    // ...and end on a unique track position within 20 moves
+    for (int tx = std::max(0, x - 20); tx < std::min(nxy, x + 21); tx++)
+    for (int ty = std::max(0, y - 20); ty < std::min(nxy, y + 21); ty++) {
+      int distance = std::abs(x - tx) + std::abs(y - ty);
+      if (map[tx + ty * nxy] == '.' && distance <= 20) {
+        if (scores[tx + ty * nxy] - score - distance >= minimum_save)
+          good_cheats++;
+      }
+    }
+  }
 
-  std::cout << "Part 2\n  Solution : " << std::endl;
+  std::cout << "Part 2\n  Long cheats saving at least " << minimum_save << " picoseconds : " << good_cheats << std::endl;
 
   return 0;
 }
