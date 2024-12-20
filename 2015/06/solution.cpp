@@ -32,7 +32,7 @@ int main(int argc, char* argv[]) {
   /* Part 1 */
   std::vector<bool> grid(1000 * 1000, false);
   char c;
-  int state = 0; // turn on: 0, turn off: 1, toggle: 2
+  int state; // turn on: 0, turn off: 1, toggle: 2
   int xa, xb, ya, yb;
   for (int i = 0; i < n_instructions; i++) {
     c = file.get();
@@ -78,8 +78,51 @@ int main(int argc, char* argv[]) {
   std::cout << "Part 1\n  Number of lights lit : " << lit_lights << std::endl;
 
   /* Part 2 */
+  file.clear();
+  file.seekg(0);
 
-  std::cout << "Part 2\n  Solution : " << std::endl;
+  std::vector<int> grid_bright(1000 * 1000, 0);
+  for (int i = 0; i < n_instructions; i++) {
+    c = file.get();
+    while (c != 't')
+      c = file.get();
+
+    c = file.get();
+
+    if (c == 'o')
+      state = 2;
+    else {
+      while (c != 'o')
+        c = file.get();
+
+      c = file.get();
+      if (c == 'n')
+        state = 0;
+      else
+        state = 1;
+    }
+
+    utils::read_next_integer(file, xa);
+    utils::read_next_integer(file, ya);
+    utils::read_next_integer(file, xb);
+    utils::read_next_integer(file, yb);
+
+    for (int y = ya; y <= yb; y++)
+    for (int x = xa; x <= xb; x++) {
+      if (state == 0)
+        grid_bright[x + y * 1000]++;
+      else if (state == 1)
+        grid_bright[x + y * 1000] = std::max(0, grid_bright[x + y * 1000] - 1);
+      else
+        grid_bright[x + y * 1000] += 2;
+    }
+  }
+
+  long total_brightness = 0L;
+  for (int i = 0; i < 1000 * 1000; i++)
+    total_brightness += grid_bright[i];
+
+  std::cout << "Part 2\n  Total brightness: " << total_brightness << std::endl;
 
   return 0;
 }
