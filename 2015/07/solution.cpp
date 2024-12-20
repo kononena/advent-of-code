@@ -28,7 +28,7 @@ struct wire {
 };
 
 void evaluate_wire(wire* w) {
-  if (w->ready)
+  if (w->ready || (w->LEFT == nullptr && w->RIGHT == nullptr))
     return;
   
   uint16_t l, r;
@@ -143,15 +143,22 @@ int main(int argc, char* argv[]) {
   }
 
   int wire_value = 0;
-  std::string wire_name = is_input ? "a" : "d";
+  std::string wire_name = is_input ? "a" : "f";
   evaluate_wire(&wires[wire_name]);
   wire_value = wires[wire_name].output;
 
   std::cout << "Part 1\n  Signal provided to " << wire_name << " : " << wire_value << std::endl;
 
   /* Part 2 */
+  std::string wire_target = is_input ? "b" : "x";
+  for (auto kv : wires)
+    wires[kv.first].ready = false;
+  wires[wire_target].output = wires[wire_name].output;
+  wires[wire_target].ready = true;
+  evaluate_wire(&wires[wire_name]);
+  wire_value = wires[wire_name].output;
 
-  std::cout << "Part 2\n  Solution : " << std::endl;
+  std::cout << "Part 2\n  Overridden signal provided to " << wire_name << " : " << wire_value << std::endl;
 
   return 0;
 }
