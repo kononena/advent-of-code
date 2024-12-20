@@ -207,11 +207,22 @@ int main(int argc, char* argv[]) {
       break;
   }
 
-  std::cout << "Part 1\n  Lowest positive number : " << append << std::endl;
+  std::cout << "Part 1\n  Lowest positive number with five zeroes : " << append << std::endl;
 
   /* Part 2 */
+  append--;
+  while (true) {
+    key = input_key;
+    append_string = std::to_string(++append);
+    for (int i = 0; i < append_string.length(); i++)
+      key.push_back(append_string[i]);
+    
+    compute_md5_hash(key, state);
+    if (!(state.a & 0xffffff00))
+      break;
+  }
 
-  std::cout << "Part 2\n  Solution : " << std::endl;
+  std::cout << "Part 2\n  Lowest positive number with five zeroes : " << append << std::endl;
 
   return 0;
 }
