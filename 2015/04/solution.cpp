@@ -49,7 +49,7 @@ uint32_t reverse_endianness(uint32_t value) {
        | (value << 24);
 }
 
-void compute_md5_hash(std::vector<char> input, state128& state_out) {
+void compute_md5_hash(std::vector<uint8_t> input, state128& state_out) {
   // Setup helpers s, K
   uint32_t s[64], K[64];
 
@@ -110,23 +110,19 @@ void compute_md5_hash(std::vector<char> input, state128& state_out) {
     size++;
   }
   
-  // for (int i = 0; i < 8; i++)
-  //   input.push_back(original_length >> (56 - 8 * i));
-  for (int i = 4; i < 8; i++)
-    input.push_back(original_length >> (56 - 8 * i));
-  for (int i = 0; i < 4; i++)
+  // Little-endian format: least significant byte first
+  for (int i = 7; i >= 0; i--)
     input.push_back(original_length >> (56 - 8 * i));
   size += 8;
 
   for (int m = 0; m < size; m += 64) {
     uint32_t M[16];
+    // Message is interpreted as little-endian
     for (int j = 0; j < 16; j++)
-      M[j] = (input[    j * 4 + m] << 24)
-           | (input[1 + j * 4 + m] << 16)
-           | (input[2 + j * 4 + m] <<  8)
-           | (input[3 + j * 4 + m] <<  0);
-    for (int j = 0; j < 16; j++)
-      M[j] = reverse_endianness(M[j]);
+      M[j] = (((uint32_t)input[    j * 4 + m]) <<  0)
+           | (((uint32_t)input[1 + j * 4 + m]) <<  8)
+           | (((uint32_t)input[2 + j * 4 + m]) << 16)
+           | (((uint32_t)input[3 + j * 4 + m]) << 24);
     
     state128 state = state0;
     for (uint32_t i = 0; i < 64; i++) {
@@ -158,6 +154,10 @@ void compute_md5_hash(std::vector<char> input, state128& state_out) {
     state0.d += state.d;
   }
 
+  state0.a = reverse_endianness(state0.a);
+  state0.b = reverse_endianness(state0.b);
+  state0.c = reverse_endianness(state0.c);
+  state0.d = reverse_endianness(state0.d);
   state_out = state0;
 }
 
@@ -185,7 +185,7 @@ int main(int argc, char* argv[]) {
   utils::Timer timer;
   
   /* Part 1 */
-  std::vector<char> input_key;
+  std::vector<uint8_t> input_key;
   char c = file.get();
   while (c != -1) {
     input_key.push_back(c);
@@ -193,18 +193,21 @@ int main(int argc, char* argv[]) {
   }
 
   state128 state;
-  compute_md5_hash(input_key, state);
-  state.a = reverse_endianness(state.a);
-  state.b = reverse_endianness(state.b);
-  state.c = reverse_endianness(state.c);
-  state.d = reverse_endianness(state.d);
-  print_uint32_t_as_hex(state.a);
-  print_uint32_t_as_hex(state.b);
-  print_uint32_t_as_hex(state.c);
-  print_uint32_t_as_hex(state.d);
-  std::cout << std::endl;
+  std::vector<uint8_t> key;
+  std::string append_string;
+  long append = -1L;
+  while (true) {
+    key = input_key;
+    append_string = std::to_string(++append);
+    for (int i = 0; i < append_string.length(); i++)
+      key.push_back(append_string[i]);
+    
+    compute_md5_hash(key, state);
+    if (!(state.a & 0xfffff000))
+      break;
+  }
 
-  std::cout << "Part 1\n  Solution : " << std::endl;
+  std::cout << "Part 1\n  Lowest positive number : " << append << std::endl;
 
   /* Part 2 */
 
