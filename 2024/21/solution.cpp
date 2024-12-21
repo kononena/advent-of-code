@@ -114,6 +114,23 @@ void process_code(std::string code, std::queue<std::string> &output, bool is_num
   }
 }
 
+int dir_to_int(char c) {
+  switch (c) {
+    case 'A':
+      return 0;
+    case '^':
+      return 1;
+    case '>':
+      return 2;
+    case 'v':
+      return 3;
+    case '<':
+      return 4;
+  }
+
+  return 999;
+}
+
 int main(int argc, char* argv[]) {
   if (argc < 2) {
     std::cerr << "Provide filename" << std::endl;
@@ -140,6 +157,7 @@ int main(int argc, char* argv[]) {
   int code_length = 4;
   
   /* Part 1 */
+  timer.tic();
   long complexity = 0L;
   for (std::string line; std::getline(file, line); ) {
     std::queue<std::string> paths;
@@ -178,12 +196,93 @@ int main(int argc, char* argv[]) {
 
     complexity += code * min_length;
   }
+  timer.toc();
 
   std::cout << "Part 1\n  Complexity : " << complexity << std::endl;
+  timer.print();
 
   /* Part 2 */
+  file.clear();
+  file.seekg(0);
+  std::vector<long> costs(5*5, 1L);
+  std::vector<long> costs_new(5*5, INT64_MAX);
+  const std::string dir_vals = "A^>v<";
 
-  std::cout << "Part 2\n  Solution : " << std::endl;
+  timer.tic();
+  for (int i = 0; i < 25; i++) {
+    for (int y = 0; y < 5; y++)
+    for (int x = 0; x < 5; x++) {
+      costs_new[x + y * 5] = INT64_MAX;
+
+      // cost to output x, given that last output was y
+      char ychar = dir_vals[y];
+      char xchar = dir_vals[x];
+      std::queue<std::string> paths;
+      dirpad_paths(ychar, xchar, paths, "");
+
+      // for each possible path y->x
+      while (!paths.empty()) {
+        // inputs: previously 'A' to output y
+        // then path y->x
+        // then 'A' to output
+        std::string path = "A" + paths.front() + "A";
+        paths.pop();
+
+        long cost = 0L;
+        int prev = dir_to_int(path[0]);
+        int cur;
+        for (int k = 1; k < path.length(); k++) {
+          cur = dir_to_int(path[k]);
+          cost += costs[cur + prev * 5];
+          prev = cur;
+        }
+
+        costs_new[x + y * 5] = std::min(costs_new[x + y * 5], cost);
+      }
+    }
+
+    costs = costs_new;
+  }
+
+  complexity = 0L;
+  for (std::string line; std::getline(file, line); ) {
+    std::queue<std::string> paths;
+    process_code(line, paths, true);
+    long min_cost = INT64_MAX;
+
+    // Process each possible path
+    while (!paths.empty()) {
+      std::string path = "A" + paths.front();
+      paths.pop();
+
+      int x = 0, y = 0; // x : current, y : previous
+      long this_cost = 0L;
+      for (int i = 1; i < path.length(); i++) {
+        x = dir_to_int(path[i]);
+        this_cost += costs[x + y * 5];
+        y = x;
+      }
+
+      min_cost = std::min(min_cost, this_cost);
+    }
+
+    long code = 0L;
+    int i = 0;
+    char c = line[i];
+    while (c < '0' || c > '9')
+      c = line[++i];
+    
+    while (c >= '0' && c <= '9') {
+      code = code * 10L + (c - '0');
+      c = line[++i];
+    }
+
+    complexity += code * min_cost;
+  }
+  timer.toc();
+
+  std::cout << "Part 2\n  Complexity with 25 robots : " << complexity << std::endl;
+  timer.print();
 
   return 0;
 }
