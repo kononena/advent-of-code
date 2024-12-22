@@ -60,15 +60,18 @@ int main(int argc, char* argv[]) {
     file >> secrets[i];
   
   /* Part 1 */
+  timer.tic();
   for (int iteration = 0; iteration < 2000; iteration++)
   for (int i = 0; i < N; i++)
     update_secret(secrets[i]);
+  timer.toc();
   
   long secret_sum = 0L;
   for (int i = 0; i < N; i++)
     secret_sum += secrets[i];
 
   std::cout << "Part 1\n  Sum of 2000th secrets : " << secret_sum << std::endl;
+  timer.print();
 
   /* Part 2 */
   file.clear();
@@ -80,6 +83,7 @@ int main(int argc, char* argv[]) {
   std::unordered_set<int> sold;
   int changes[4], index;
   // For each monkey
+  timer.tic();
   for (int m = 0; m < N; m++) {
     // Sold stores which price change sequences have been processed
     sold.clear();
@@ -108,12 +112,14 @@ int main(int argc, char* argv[]) {
       update_secret(secret1);
     }
   }
+  timer.toc();
 
   long max_price = 0L;
   for (auto kv : prices)
     max_price = std::max(max_price, kv.second);
   
   std::cout << "Part 2\n  Maximum number of bananas : " << max_price << std::endl;
+  timer.print();
 
   return 0;
 }
