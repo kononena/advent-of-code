@@ -14,11 +14,12 @@ std::string id_to_name(int id) {
   return out;
 }
 
-void print_clique(const std::vector<int> &computers, int depth) {
-  std::cout << "Clique : ";
+std::string clique_to_string(const std::vector<int> &computers, int depth) {
+  std::string clique = "";
   for (int i = 0; i < depth-1; i++)
-    std::cout << id_to_name(computers[i]) << ",";
-  std::cout << id_to_name(computers[depth-1]) << "\n";
+    clique += id_to_name(computers[i]) + ",";
+  clique += id_to_name(computers[depth-1]);
+  return clique;
 }
 
 bool any_t(const std::vector<int> &computers, int depth) {
@@ -29,9 +30,9 @@ bool any_t(const std::vector<int> &computers, int depth) {
   return false;
 }
 
-long valid_subsets(const std::vector<bool> &connections, std::vector<int> &computers, int depth, const int target) {
+long valid_subsets(const std::vector<bool> &connections, std::vector<int> &computers, int depth, const int target, bool check_t = true, bool exit_early = false) {
   if (depth + 1 == target) {
-    if (any_t(computers, depth+1))
+    if (!check_t || any_t(computers, depth+1))
       return 1L;
     return 0L;
   }
@@ -54,7 +55,12 @@ long valid_subsets(const std::vector<bool> &connections, std::vector<int> &compu
       continue;
     
     computers[depth+1] = i;
-    subsets += valid_subsets(connections, computers, depth+1, target);
+    subsets += valid_subsets(connections, computers, depth+1, target, check_t, 
+    
+    exit_early);
+
+    if (exit_early && subsets > 0L)
+      return subsets;
   }
 
   return subsets;
@@ -108,8 +114,34 @@ int main(int argc, char* argv[]) {
   timer.print();
 
   /* Part 2 */
+  timer.tic();
+  int target = 2;
+  while (++target < 100) {
+    long sets = 0;
+    computers.resize(target);
 
-  std::cout << "Part 2\n  Solution : " << std::endl;
+    for (int i = 0; i < NAB2; i++) {
+      computers[0] = i;
+      sets += valid_subsets(connections, computers, 0, target, false);
+    }
 
+    if (sets == 0) {
+      target--;
+      break;
+    }
+  }
+
+  std::string password;
+  for (int i = 0; i < NAB2; i++) {
+    computers[0] = i;
+    if (valid_subsets(connections, computers, 0, target, false, true) > 0) {
+      password = clique_to_string(computers, target);
+      break;
+    }
+  }
+  timer.toc();
+
+  std::cout << "Part 2\n  LAN password : " << password << std::endl;
+  timer.print();
   return 0;
 }
