@@ -74,7 +74,7 @@ int main(int argc, char* argv[]) {
 
   /* Part 2 */
 
-  std::cout << "Part 2\n  Solution : " << std::endl;
+  std::cout << "Part 2\n  Merry Christmas!" << std::endl;
 
   return 0;
 }
